@@ -16,16 +16,18 @@
 					<p>{{ season.description }}</p>
 				</div>
 			</div>
-			<div class="col-4 mt-5 pt-5">
+			<div class="col-5 mt-5 pt-5">
 				<p>Liste des épisodes:</p>
-				<ul>
-					{% for episode in episodes %}
-						<li>Épisode
-							{{ episode.number }}
-							:
-							{{ episode.title }}</li>
-					{% endfor %}
-				</ul>
+
+				{% for episode in episodes %}
+					<a href="{{ path('program_episode_show', {programId: program.id, seasonId: season.id, episodeId: episode.id}) }}" class="btn text-danger  bg-dark px-2 m-1">Épisode
+						{{ episode.number }}
+						:
+						{{ episode.title }}</a>
+					<br/>
+
+				{% endfor %}
+
 				<a href="{{ path("program_show", { id: program.id }) }}" class=" flex d-flex justify-content-end mb-5">
 					<div class="btn btn-dark m-2">
 						Retour Saisons

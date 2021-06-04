@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-8">
+				<h1>{{program.title}}</h1>
+				<div class="row">
+					<div class="col-6">
+						<img src="{{program.poster}}" width="200" alt="{{ program.title }} poster">
+					</div>
+					<div class="col-6">
+						<h2 class="text-danger fw-bold bg-dark px-2">Saison
+							{{ season.number }}
+							-
+							{{ season.year }}</h2>
+						<h5>{{ episode.number }}
+							-
+							{{ episode.title}}</h5>
+						<p>{{ episode.synopsis }}</p>
+					</div>
+					<a href="{{ path('program_season_show', {programId: program.id, seasonId: season.id}) }}" class=" flex d-flex justify-content-end mb-5">
+						<div class="btn btn-dark m-2">
+							Retour Saison
+						</div>
+					</a>
+				</div>
+			</div>
+		</div>
+	{% endblock %}
