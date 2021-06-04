@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+{% block title %}Série #{{ program.id }}
+{% endblock %}
+
+{% block body %}
+	<div class="container justify-content-center">
+		<div class="row justify-content-center mt-5 p-2">
+			<div class="row justify-content-center">
+				<div class="col-8 p-2">
+					{% for season in seasons %}
+						<a href="{{ path('program_season_show', {programId: program.id, seasonId: season.id}) }}">
+							<div class="btn btn-danger m-2">Saison
+								{{ season.number }}
+							</div>
+						</a>
+
+					{% endfor %}
+				</div>
+			</div>
+			<div class="col-8">
+				<img src="{{ program.poster }}" width="200" alt="{{ program.title }}">
+				<div class="row">
+					<div class="col-8">
+						<h1 class="mt-0">{{ program.title }}</h1>
+						<p>{{ program.summary }}</p>
+						<p>Catégorie :
+							{{ program.category.name }}</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<a href="{{ path('program_index') }}" class="flex d-flex justify-content-end mb-5">
+			<div class="btn btn-dark m-2">
+				Retour
+				{{ program.category.name }}
+			</div>
+		</a>
+	</div>
+</div>{% endblock %}

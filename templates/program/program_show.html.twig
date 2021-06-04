@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-4">
+				<h1>{{program.title}}</h1>
+				<img src="{{program.poster}}" alt="{{ program.title }} poster">
+				<div class="border-top border-2 border-dark p-2">
+					<h2 class="text-danger fw-bold bg-dark px-2">Saison
+						{{ season.number }}
+					</h2>
+					Année de sortie :
+					{{ season.year }}
+				</div>
+				<div class="border-top border-2 border-dark p-2">
+					<p>{{ season.description }}</p>
+				</div>
+			</div>
+			<div class="col-4 mt-5 pt-5">
+				<p>Liste des épisodes:</p>
+				<ul>
+					{% for episode in episodes %}
+						<li>Épisode
+							{{ episode.number }}
+							:
+							{{ episode.title }}</li>
+					{% endfor %}
+				</ul>
+				<a href="{{ path("program_show", { id: program.id }) }}" class=" flex d-flex justify-content-end mb-5">
+					<div class="btn btn-dark m-2">
+						Retour Saisons
+					</div>
+				</a>
+			</div>
+		</div>
+	{% endblock %}
