@@ -23,7 +23,6 @@ class ProgramController extends AbstractController
 {
     /**
      * Show all rows from Program’s entity
-     *
      * @Route("/", name="index")
      * @return Response A response instance
      */
@@ -41,7 +40,6 @@ class ProgramController extends AbstractController
 
      /**
      * @Route("/new", name="new")
-     *
      * @return Response
      */
     public function new(Request $request) : Response
@@ -49,7 +47,7 @@ class ProgramController extends AbstractController
         $program = new Program();
         $form = $this->createForm(ProgramType::class, $program);
         $form->handleRequest($request);
-       if ($form->isSubmitted()) {
+       if ($form->isSubmitted() && $form->isValid()) {
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($program);
         $entityManager->flush();

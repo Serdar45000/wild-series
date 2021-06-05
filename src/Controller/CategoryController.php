@@ -32,7 +32,6 @@ class CategoryController extends AbstractController
     /**
      * The controller for the category add form
      * Display the form or deal with it
-     *
      * @Route("/new", name="new")
      */
 
@@ -53,7 +52,6 @@ class CategoryController extends AbstractController
 
     /**
      * @Route("/{categoryName}", name="show")
-     *
      * @param string $categoryName
      * @return Response
      */
