@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Season index
+{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-10 m-3 bg-light border border-1 border-dark shadow rounded">
+				<h1>Season index</h1>
+				<div class="d-flex justify-content-center">
+					<a href="{{ path('season_new') }}" class="btn btn-success d-flex justify-content-center fw-bold shadow m-3 w-50">Create new</a>
+				</div>
+				<table class="table">
+					<thead>
+						<tr>
+							<th class="bg-dark text-light text-center border border-light">Id</th>
+							<th class="bg-dark text-light text-center border border-light">Number</th>
+							<th class="bg-dark text-light text-center border border-light">Year</th>
+							<th class="bg-dark text-light text-center border border-light">Description</th>
+							<th class="bg-dark text-light text-center border border-light">actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for season in seasons %}
+							<tr>
+								<td>{{ season.id }}</td>
+								<td class="text-center">{{ season.number }}</td>
+								<td>{{ season.year }}</td>
+								<td>{{ season.description }}</td>
+								<td>
+									<div class="d-flex justify-content-center">
+										<a href="{{ path('season_show', {'id': season.id}) }}" class="btn btn-success m-2 w-100">show</a>
+										<a href="{{ path('season_edit', {'id': season.id}) }}" class="btn btn-danger m-2 w-100">edit</a>
+									</div>
+								</td>
+							</tr>
+						</td>
+					</tbody>
+				</tr>
+			{% else %}
+				<tr>
+					<td colspan="5">no records found</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+</div></div></div>{% endblock %}

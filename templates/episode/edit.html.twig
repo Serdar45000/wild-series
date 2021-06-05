@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+
+{% block title %}Edit Episode
+{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-8 border border-1 border-dark bg-light shadow rounded mt-5 p-3">
+				<h1>Edit Episode</h1>
+				<div class="row">
+					<div class="col-12">
+						{{ include('episode/_form.html.twig', {'button_label': 'Update'}) }}
+					</div>
+				</div>
+				<div class="row m-2">
+					<div class="col-6 d-flex justify-content-center">
+						<a href="{{ path('episode_index') }}" class="btn btn-dark">back to list</a>
+					</div>
+					<div class="col-6 d-flex justify-content-center">
+						{{ include('episode/_delete_form.html.twig') }}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
