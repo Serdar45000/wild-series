@@ -1,0 +1,28 @@
+{% extends "email/email.layout.html.twig" %}
+{% block title %}
+	{{ parent() }}
+	Episode
+{% endblock %}
+{% block body %}
+	<h1>Nouvel épisode</h1>
+	<h2>
+		<p>Programme :
+			{{ episode.season.program.title }}
+		</p>
+		<p>
+			Saison :
+			{{ episode.season.number }}
+		</p>
+		<p>
+			Épisode n°{{ episode.number }}
+		</p>
+		<p>
+			Titre :
+			{{ episode.title }}
+		</p>
+	</h2>
+	<p>
+		Résumé :{{episode.synopsis }}
+	</p>
+	<a href="http://localhost:8000/programs/{{ episode.season.program.slug }}/seasons/1/episodes/{{ episode.slug }}">Cliquez ici pour voir l'épisode</a>
+</div>{% endblock %}
