@@ -8,13 +8,16 @@ use App\Entity\Category;
 use App\Entity\Season;
 use App\Entity\Program;
 use App\Entity\Episode;
+use App\Entity\Comment;
 use App\Form\ProgramType;
+use App\Form\CommentType;
 use App\Service\Slugify;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
+use Doctrine\ORM\EntityManagerInterface;
 
 
 /**
@@ -127,32 +130,46 @@ class ProgramController extends AbstractController
      * @ParamConverter("episode", class="App\Entity\Episode", options={"mapping": {"episodeSlug": "slug"}})
      * @return Response
      */
-    public function showEpisode(Program $program, Season $season, Episode $episode, Slugify $slugify): Response
+    
+    public function showEpisode(Request $request, Program $program, Season $season, Episode $episode, EntityManagerInterface $entityManager, Slugify $slugify): Response
     {
 
         if (!$program) {
             throw $this->createNotFoundException(
-                'Programme avec id  ' . $program->getId() . ' inexistant dans la base de données.'
+                'Programme avec id ' . $program->getId() . ' inexistant dans la base de données.'
             );
         }
-
         if (!$season) {
             throw $this->createNotFoundException(
-                'Saison avec id  ' . $season->getId() . ' inexistant dans la base de données.'
+                'Saison avec id : ' . $season->getId() . ' inexistant dans la base de données.'
+            );
+        }
+        if (!$episode) {
+            throw $this->createNotFoundException(
+                'Épisode avec id : ' . $episode->getId() . ' inexistant dans la base de données.'
             );
         }
 
-        if (!$episode) {
-            throw $this->createNotFoundException(
-                'Épisode avec id  ' . $episode->getId() . 'inexistant dans la base de données.'
-            );
+        $comment = new Comment();
+        $form = $this->createForm(CommentType::class, $comment);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $comment->setEpisode($episode);
+            $comment->setAuthor($this->getUser());
+            $entityManager->persist($comment);
+            $entityManager->flush();
+            return $this->redirect($request->getUri());
         }
+
         $slug = $slugify->generate($program->getTitle());
         $program->setSlug($slug);
         return $this->render('program/episode_show.html.twig', [
             'program' => $program,
             'season' => $season,
             'episode' => $episode,
+            'form' => $form->createView(),
+            'button_label' => 'Poster',
         ]);
     }
 }
