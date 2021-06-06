@@ -8,8 +8,8 @@
 			<div class="row justify-content-center">
 				<div class="col-8 p-2">
 					{% for season in seasons %}
-						<a href="{{ path('program_season_show', {programId: program.id, seasonId: season.id}) }}">
-							<div class="btn btn-danger m-2">Saison
+						<a href="{{ path('program_season_show', {slug: program.slug, seasonId: season.id}) }}">
+							<div class="btn btn-danger m-2 shadow border border-1">Saison
 								{{ season.number }}
 							</div>
 						</a>

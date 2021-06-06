@@ -15,6 +15,7 @@
 							<th>Id</th>
 							<td>{{ episode.id }}</td>
 						</tr>
+
 						<tr>
 							<th>Title</th>
 							<td>{{ episode.title }}</td>
@@ -35,7 +36,7 @@
 						<a href="{{ path('episode_index') }}" class="btn btn-dark">back to list</a>
 					</div>
 					<div class="col-3 text-center">
-						<a href="{{ path('episode_edit', {'id': episode.id}) }}" class="btn btn-success w-50">edit</a>
+						<a href="{{ path('episode_edit', {'slug': episode.slug}) }}" class="btn btn-success w-50">edit</a>
 					</div>
 					<div class="col-3 text-center">
 						{{ include('episode/_delete_form.html.twig') }}

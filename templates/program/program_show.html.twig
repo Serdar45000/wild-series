@@ -20,7 +20,7 @@
 				<p>Liste des épisodes:</p>
 
 				{% for episode in episodes %}
-					<a href="{{ path('program_episode_show', {programId: program.id, seasonId: season.id, episodeId: episode.id}) }}" class="btn text-danger  bg-dark px-2 m-1">Épisode
+					<a href="{{ path('program_episode_show', {programSlug: program.slug, seasonId: season.id, episodeSlug: episode.slug}) }}" class="btn text-danger  bg-dark px-2 m-1">Épisode
 						{{ episode.number }}
 						:
 						{{ episode.title }}</a>
@@ -28,7 +28,7 @@
 
 				{% endfor %}
 
-				<a href="{{ path("program_show", { id: program.id }) }}" class=" flex d-flex justify-content-end mb-5">
+				<a href="{{ path("program_show", { 'slug': program.slug }) }}" class=" flex d-flex justify-content-end mb-5">
 					<div class="btn btn-dark m-2">
 						Retour Saisons
 					</div>

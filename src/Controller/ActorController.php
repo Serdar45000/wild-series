@@ -23,8 +23,7 @@ class ActorController extends AbstractController
             'controller_name' => 'ActorController',
         ]);
     }
-
-    /**
+        /**
      * @Route("/{id}", name="show")
      *
      * @return Response
@@ -36,6 +35,7 @@ class ActorController extends AbstractController
                 'Il n\'y a pas d\'acteur à l\'id' . $actor->getId() . ' dans la base de données.'
             );
         }
+
         return $this->render('actor/show.html.twig', [
             'actor' => $actor,
         ]);
