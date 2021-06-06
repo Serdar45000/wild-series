@@ -23,7 +23,29 @@
 							Retour Saison
 						</div>
 					</a>
+
+					<div class="m-4 rounded">
+						<h4>Commentaires:
+						</h4>
+						{% for comment in episode.comments %}
+							<div class="border border-1 border-succes rounded shadow m-2 p-4">
+								{{ comment.author.username }}
+								:
+								{{ comment.comment }}
+								<div class="float-end">
+									{{ comment.rate }}
+									/ 5
+								</div>
+							</div>
+							<p class="text-center">
+								{% else %}Aucun Commentaire</p>
+						{% endfor %}
+					</ul>
+					{% if app.user %}
+						{% include "program/_commentForm.html.twig" %}
+					{% endif %}
 				</div>
 			</div>
 		</div>
-	{% endblock %}
+	</div>
+{% endblock %}

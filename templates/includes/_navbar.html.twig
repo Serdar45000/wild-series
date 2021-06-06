@@ -19,4 +19,14 @@
 			<a class="nav-link fw-bold fs-4 text-light mx-3" href="#">Contact</a>
 		</li>
 	</ul>
+	{% if app.user %}
+		<div class="btn btn-success">
+			{{- app.user.email -}}
+		</div>
+		<a class="btn btn-success mx-2" href="{{ path('app_logout') }}">
+			Se déconnecter</a>
+	{% else %}
+		<a class="btn btn-success" href="{{ path('app_login') }}">
+			Se connecter</a>
+	{% endif %}
 </div></nav>
