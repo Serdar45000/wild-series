@@ -1,0 +1,19 @@
+{% extends "email/email.layout.html.twig" %}
+{% block title %}
+	{{ parent() }}
+	Episode
+{% endblock %}
+{% block body %}
+	Bonjour, un nouveau programme a été ajouté sur le site :
+	<h1>Nouveau programme :</h1>
+	<h2>
+		{{ program.title }}
+	</h2>
+
+	<h3>
+		Synopsis :
+		{{program.summary }}
+	</h3>
+
+	<a href="http://localhost:8000/programs/{{ program.slug }}">Cliquez ici pour voir le nouveau programme</a>
+</div>{% endblock %}
