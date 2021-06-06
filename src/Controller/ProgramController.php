@@ -9,6 +9,7 @@ use App\Entity\Season;
 use App\Entity\Program;
 use App\Entity\Episode;
 use App\Form\ProgramType;
+use App\Service\Slugify;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -42,31 +43,36 @@ class ProgramController extends AbstractController
      * @Route("/new", name="new")
      * @return Response
      */
-    public function new(Request $request) : Response
+    public function new(Request $request, Slugify $slugify) : Response
     {
         $program = new Program();
         $form = $this->createForm(ProgramType::class, $program);
         $form->handleRequest($request);
-       if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
+        $slug = $slugify->generate($program->getTitle());
+        $program->setSlug($slug);
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($program);
         $entityManager->flush();
         return $this->redirectToRoute('program_index');
-    }
+        }
         return $this->render('program/new.html.twig', ["form" => $form->createView()]);
     }
 
     /**
-     * @Route("/show/{id<^[0-9]+$>}", name="show")
+     * @Route("/{slug}", name="show")
      * @return Response
      */
-    public function show(Program $program): Response
+    public function show(Program $program, Slugify $slugify): Response
     {
         $seasons = $this->getDoctrine()
             ->getRepository(Season::class)
             ->findBy([
-                'program' => $program->getId()
+                'program' => $program
             ]);
+
+        $slug = $slugify->generate($program->getTitle());
+        $program->setSlug($slug);
 
         if (!$program) {
             throw $this->createNotFoundException(
@@ -79,39 +85,32 @@ class ProgramController extends AbstractController
         ]);
     }
 
+
     /**
-     * @Route("/{programId}/seasons/{seasonId}", name="season_show")
-     * @ParamConverter("program", class="App\Entity\Program", options={"mapping": {"programId": "id"}})
+     * @Route("/{slug}/seasons/{seasonId}", name="season_show")
+     * @ParamConverter("program", class="App\Entity\Program", options={"mapping": {"slug": "slug"}})
      * @ParamConverter("season", class="App\Entity\Season", options={"mapping": {"seasonId": "id"}})
      * @return Response
      */
-    public function showSeason(int $programId, int $seasonId): Response
+    public function showSeason(Program $program, Season $season): Response
     {
-        $program = $this->getDoctrine()
-            ->getRepository(Program::class)
-            ->find($programId);
 
         if (!$program) {
             throw $this->createNotFoundException(
-                'Programme avec id ' . $programId . ' inexistant dans la base de données.'
+                'Programme avec id  ' . $program->getId() . ' inexistant dans la base de données.'
             );
         }
 
-        $season = $this->getDoctrine()
-            ->getRepository(Season::class)
-            ->find($seasonId);
-
-
         if (!$season) {
             throw $this->createNotFoundException(
-                'Saison avec id ' . $seasonId . ' inexistant dans la base de données.'
+                'Saison avec id  ' . $season->getId() . ' inexistant dans la base de données.'
             );
         }
 
         $episodes = $this->getDoctrine()
             ->getRepository(Episode::class)
             ->findBy([
-                'season' => $seasonId
+                'season' => $season->getId()
             ]);
 
         return $this->render('program/program_show.html.twig', [
@@ -122,33 +121,34 @@ class ProgramController extends AbstractController
     }
 
     /**
-     * @Route("/{programId}/seasons/{seasonId}/episodes/{episodeId}", name="episode_show")
-     * @ParamConverter("program", class="App\Entity\Program", options={"mapping": {"programId": "id"}})
+     * @Route("/{programSlug}/seasons/{seasonId}/episodes/{episodeSlug}", name="episode_show")
+     * @ParamConverter("program", class="App\Entity\Program", options={"mapping": {"programSlug": "slug"}})
      * @ParamConverter("season", class="App\Entity\Season", options={"mapping": {"seasonId": "id"}})
-     * @ParamConverter("episode", class="App\Entity\Episode", options={"mapping": {"episodeId": "id"}})
+     * @ParamConverter("episode", class="App\Entity\Episode", options={"mapping": {"episodeSlug": "slug"}})
      * @return Response
      */
-    public function showEpisode(Program $program, Season $season, Episode $episode): Response
+    public function showEpisode(Program $program, Season $season, Episode $episode, Slugify $slugify): Response
     {
 
         if (!$program) {
             throw $this->createNotFoundException(
-                'No program with id : ' . $program->getId() . ' found in program\'s table.'
+                'Programme avec id  ' . $program->getId() . ' inexistant dans la base de données.'
             );
         }
 
         if (!$season) {
             throw $this->createNotFoundException(
-                'No season with id : ' . $season->getId() . ' found in season\'s table.'
+                'Saison avec id  ' . $season->getId() . ' inexistant dans la base de données.'
             );
         }
 
         if (!$episode) {
             throw $this->createNotFoundException(
-                'No episode with id : ' . $episode->getId() . ' found in episode\'s table.'
+                'Épisode avec id  ' . $episode->getId() . 'inexistant dans la base de données.'
             );
         }
-
+        $slug = $slugify->generate($program->getTitle());
+        $program->setSlug($slug);
         return $this->render('program/episode_show.html.twig', [
             'program' => $program,
             'season' => $season,

@@ -18,7 +18,7 @@
 							{{ episode.title}}</h5>
 						<p>{{ episode.synopsis }}</p>
 					</div>
-					<a href="{{ path('program_season_show', {programId: program.id, seasonId: season.id}) }}" class=" flex d-flex justify-content-end mb-5">
+					<a href="{{ path('program_season_show', {slug: program.slug, seasonId: season.id}) }}" class=" flex d-flex justify-content-end mb-5">
 						<div class="btn btn-dark m-2">
 							Retour Saison
 						</div>

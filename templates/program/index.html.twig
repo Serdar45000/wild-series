@@ -12,7 +12,7 @@
 				<div class="col-8">
 					<h2>{{ program.id }}
 						/
-						<a href="{{ path("program_show", { id: program.id }) }}">{{ program.title }}</a>
+						<a href="{{ path("program_show", { 'slug': program.id }) }}">{{ program.title }}</a>
 					</h2>
 					Catégorie :
 					{{ program.category.name }}
