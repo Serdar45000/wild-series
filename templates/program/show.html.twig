@@ -19,34 +19,40 @@
 			</div>
 			<div class="col-8">
 				<img src="{{ program.poster }}" width="200" alt="{{ program.title }}">
-				<div class="row">
-					<div class="col-8">
-						<h1 class="mt-0">{{ program.title }}</h1>
-						<p>{{ program.summary }}</p>
-						<p>Catégorie :
-							{{ program.category.name }}</p>
-						<p>
-							<strong>Acteurs :</strong>
-							<ul>
-								{% for actor in program.actors %}
-									<li>
-										<a href="{{ path('actor_show', {id: actor.id}) }}">{{ actor.name }}
-										</a>
-									</li>
-								{% else %}
-									<li>Aucun acteur pour cette série</li>
-								{% endfor %}
-							</ul>
-						</p>
+				<div class="flex d-flex justify-content-end mb-5">
+					{% if is_granted("ROLE_ADMIN") %}
+						<a href="{{ path('program_edit', { 'slug': program.slug} ) }}" class="btn btn-success">Éditer</a>
+						{%endif%}
+					</div>
+					<div class="row">
+						<div class="col-8">
+							<h1 class="mt-0">{{ program.title }}</h1>
+							<p>{{ program.summary }}</p>
+							<p>Catégorie :
+								{{ program.category.name }}</p>
+							<p>
+								<strong>Acteurs :</strong>
+								<ul>
+									{% for actor in program.actors %}
+										<li>
+											<a href="{{ path('actor_show', {id: actor.id}) }}">{{ actor.name }}
+											</a>
+										</li>
+									{% else %}
+										<li>Aucun acteur pour cette série</li>
+									{% endfor %}
+								</ul>
+							</p>
+						</div>
 					</div>
 				</div>
 			</div>
+			<a href="{{ path('program_index') }}" class="flex d-flex justify-content-end mb-5">
+				<div class="btn btn-dark m-2">
+					Retour
+					{{ program.category.name }}
+				</div>
+			</a>
 		</div>
-		<a href="{{ path('program_index') }}" class="flex d-flex justify-content-end mb-5">
-			<div class="btn btn-dark m-2">
-				Retour
-				{{ program.category.name }}
-			</div>
-		</a>
 	</div>
-</div>{% endblock %}
+{% endblock %}

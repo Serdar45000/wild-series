@@ -18,6 +18,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 
 /**
@@ -54,6 +55,7 @@ class ProgramController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
         $slug = $slugify->generate($program->getTitle());
         $program->setSlug($slug);
+        $program->setOwner($this->getUser());
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($program);
         $entityManager->flush();
@@ -153,13 +155,16 @@ class ProgramController extends AbstractController
         $comment = new Comment();
         $form = $this->createForm(CommentType::class, $comment);
         $form->handleRequest($request);
-
+        $comment->setEpisode($episode);
         if ($form->isSubmitted() && $form->isValid()) {
-            $comment->setEpisode($episode);
-            $comment->setAuthor($this->getUser());
-            $entityManager->persist($comment);
-            $entityManager->flush();
-            return $this->redirect($request->getUri());
+            if ($this->getUser()) {
+                $comment->setAuthor($this->getUser());
+                $entityManager->persist($comment);
+                $entityManager->flush();
+                return $this->redirect($request->getUri());
+            } else {
+                throw new AccessDeniedException('Seul les membres peuvent enregsitrer un nouveau programme');
+            }
         }
 
         $slug = $slugify->generate($program->getTitle());
@@ -170,6 +175,56 @@ class ProgramController extends AbstractController
             'episode' => $episode,
             'form' => $form->createView(),
             'button_label' => 'Poster',
+        ]);
+    }
+
+        /**
+     * @Route("/{slug}/edit", name="edit", methods={"GET","POST"})
+     * @ParamConverter("program", class="App\Entity\Program", options={"mapping": {"slug": "slug"}})
+     */
+    public function edit(Request $request, Program $program): Response
+    {
+        if (!($this->getUser() == $program->getOwner()) && !in_array('ROLE_ADMIN', $this->getUser()->getRoles())) {
+            // If not the owner, throws a 403 Access Denied exception
+            throw new AccessDeniedException('Only the owner can edit the program!');
+        }
+
+        $form = $this->createForm(ProgramType::class, $program);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
+            return $this->redirectToRoute('program_index');
+        }
+
+        return $this->render('program/edit.html.twig', [
+            'season' => $program,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/comment/{id}", name="delete_comment", methods={"POST"})
+     */
+    public function deleteComment(Request $request, Comment $comment): Response
+    {
+        /** @var Episode */
+        $episode = $comment->getEpisode();
+        /** @var Season */
+        $season = $episode->getSeason();
+        /** @var Program */
+        $program = $season->getProgram()->getSlug();
+
+        if ($this->isCsrfTokenValid('delete' . $comment->getId(), $request->request->get('_token'))) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($comment);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('program_episode_show', [
+            'programSlug' => $program,
+            'seasonId' => $season->getId(),
+            'episodeSlug' => $episode->getSlug(),
         ]);
     }
 }

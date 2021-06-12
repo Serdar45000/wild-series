@@ -1,5 +1,27 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-	<h1>Bienvenue !</h1>
-{% endblock %}
+	<div class="container">
+		<h1 class="text-center mt-5">Les dernières séries</h1>
+		<div class="row justify-content-center">
+			{% for program in programs %}
+				<div class="col-sm-3">
+					<div class="card text-center m-2 bg-dark">
+						<h5 class="card-header font-weight-bold bg-danger">
+							{{ program.title }}
+						</a>
+					</h5>
+					<img class="align-self-center mt-2 h-25 rounded" src="{{ program.poster }}" width="150" alt="{{ program.title }}">
+					<div class="card-body">
+						<p class="text-danger float-start">Catégorie :
+							{{ program.category.name }}</p>
+						<p class="text-justify text-light float-start">{{ program.summary | truncate(200) }}</p>
+						<a href="{{ path("program_show", { 'slug': program.slug }) }}" class="btn btn-danger">Voir Programme</a>
+					</div>
+				</div>
+			</div>
+		{% else %}
+			Aucune série trouvée.
+		{% endfor %}
+	</div>
+</div>{% endblock %}

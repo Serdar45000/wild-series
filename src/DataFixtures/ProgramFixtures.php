@@ -58,6 +58,7 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
     public function load(ObjectManager $manager)
     {
         foreach (self::PROGRAMS as $title => $description) {
+            $user=0;
             $program = new Program();
             $program->setTitle($title);
             $program->setSummary($description['summary']);
@@ -70,6 +71,13 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
                 $program->addActor($this->getReference('actor_' . $i));
             }
             $program->setSlug($this->slugify->generate($program->getTitle()));
+            if ($user === 0) {
+                $program->setOwner($this->getReference('contributor'));
+                $user++;
+            } else {
+                $program->setOwner($this->getReference('admin'));
+                $user = 0;
+            }
             $manager->persist($program);
             $this->addReference('program_' . $title, $program);
         }

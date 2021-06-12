@@ -25,25 +25,34 @@
 					</a>
 
 					<div class="m-4 rounded">
+						{% if app.user and is_granted("ROLE_CONTRIBUTOR")%}
+							{% include "program/_commentForm.html.twig" %}
+						{% endif %}
 						<h4>Commentaires:
 						</h4>
 						{% for comment in episode.comments %}
-							<div class="border border-1 border-succes rounded shadow m-2 p-4">
-								{{ comment.author.username }}
-								:
-								{{ comment.comment }}
-								<div class="float-end">
-									{{ comment.rate }}
-									/ 5
+							<div class="row">
+								<div class="col border border-1 border-success rounded shadow">
+									<div class="m-2 p-4">
+										{{ comment.author.username }}
+										:
+										{{ comment.comment }}
+										<div class="float-end">
+											{{ comment.rate }}
+											/ 5
+										</div>
+									</div>
+									<div class="col">
+										{% if app.user and app.user == comment.author or is_granted('ROLE_ADMIN') %}
+											{% include "program/_deleteComment.html.twig" %}
+										{% endif %}
+									</div>
 								</div>
 							</div>
 							<p class="text-center">
 								{% else %}Aucun Commentaire</p>
 						{% endfor %}
 					</ul>
-					{% if app.user %}
-						{% include "program/_commentForm.html.twig" %}
-					{% endif %}
 				</div>
 			</div>
 		</div>
