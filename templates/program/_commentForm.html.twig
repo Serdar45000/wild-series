@@ -1,6 +1,10 @@
 {{ form_start(form) }}
 
 <div class="row justify-content-center border border-2 shadow">
+	<h2 class="mt-2">
+		Ajoutez un commentaire:
+	</h2>
+
 	<div class="col-6 m-2">
 		{{ form_label(form.rate) }}
 		{{ form_widget(form.rate)}}
@@ -9,15 +13,8 @@
 
 
 	<div class="col-6 m-2">
-		<h2 class="mt-2">
-			Ajoutez un commentaire:
-		</h2>
 		{{ form_label(form.comment) }}
 		{{ form_widget(form.comment) }}
-		<div class="d-flex justify-content-end">
-			<button class="btn btn-success mt-2">{{ button_label|default('Save') }}</button>
-		</div>
+		{{ form_end(form) }}
 	</div>
 </div>
-
-{{ form_end(form) }}

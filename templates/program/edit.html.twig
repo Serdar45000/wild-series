@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit program
+{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<div class="row justify-content-center mb-5">
+			<div class="col-8 border border-1 border-dark bg-light shadow rounded mt-5 p-3">
+				<h1>Editer un programme
+				</h1>
+				<div class="col">
+					{{ include('program/_form.html.twig', {'button_label': 'Mise à jour'}) }}
+					<div class="d-flex justify-content-end">
+						<a href="{{ path('program_index') }}" class="btn btn-dark">Retour à la liste</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

@@ -47,6 +47,7 @@ class Episode
 
     /**
      * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="episode")
+     * @ORM\OrderBy({"id" = "DESC"})
      */
     private $comments;
 
