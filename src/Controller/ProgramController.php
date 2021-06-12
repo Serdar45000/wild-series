@@ -4,20 +4,22 @@
 
 namespace App\Controller;
 
-use App\Entity\Category;
 use App\Entity\Season;
 use App\Entity\Program;
 use App\Entity\Episode;
 use App\Entity\Comment;
+use App\Service\Slugify;
+use App\Entity\Category;
 use App\Form\ProgramType;
 use App\Form\CommentType;
-use App\Service\Slugify;
+use App\Repository\ProgramRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Symfony\Component\HttpFoundation\Request;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 
@@ -31,15 +33,25 @@ class ProgramController extends AbstractController
      * @Route("/", name="index")
      * @return Response A response instance
      */
-    public function index(): Response
+    public function index(Request $request, ProgramRepository $programRepository): Response
     {
         $programs = $this->getDoctrine()
             ->getRepository(Program::class)
             ->findAll();
+        $form = $this->createForm(SearchType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $search = $form->getData();
+            $programs = $programRepository->findLikeName($search);
+        } else {
+            $programs = $programRepository->findAll();
+        }
 
         return $this->render(
             'program/index.html.twig', [
-                'programs' => $programs
+                'programs' => $programs,
+                'form' => $form->createView(),
             ]);
     }
 
@@ -174,7 +186,6 @@ class ProgramController extends AbstractController
             'season' => $season,
             'episode' => $episode,
             'form' => $form->createView(),
-            'button_label' => 'Poster',
         ]);
     }
 
