@@ -11,7 +11,7 @@
 							{{ program.title }}
 						</a>
 					</h5>
-					<img class="align-self-center mt-2 h-25 rounded" src="{{ program.poster }}" width="150" alt="{{ program.title }}">
+					<img class="align-self-center mt-2 h-25 rounded" src="{{ vich_uploader_asset(program, 'posterFile') }}" width="150" alt="{{ program.title }}">
 					<div class="card-body">
 						<p class="text-danger float-start">Catégorie :
 							{{ program.category.name }}</p>
