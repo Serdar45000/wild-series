@@ -18,7 +18,7 @@
 				</div>
 			</div>
 			<div class="col-8">
-				<img src="{{ program.poster }}" width="200" alt="{{ program.title }}">
+				<img src="{{ vich_uploader_asset(program, 'posterFile') }}" width="200" alt="{{ program.title }}">
 				<div class="flex d-flex justify-content-end mb-5">
 					{% if is_granted("ROLE_ADMIN") %}
 						<a href="{{ path('program_edit', { 'slug': program.slug} ) }}" class="btn btn-success">Éditer</a>

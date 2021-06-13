@@ -6,7 +6,7 @@
 				<h1>{{program.title}}</h1>
 				<div class="row">
 					<div class="col-6">
-						<img src="{{program.poster}}" width="200" alt="{{ program.title }} poster">
+						<img src="{{ vich_uploader_asset(program, 'posterFile') }}" width="200" alt="{{ program.title }} poster">
 					</div>
 					<div class="col-6">
 						<h2 class="text-danger fw-bold bg-dark px-2">Saison

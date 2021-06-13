@@ -2,14 +2,21 @@
 
 namespace App\Entity;
 
-use App\Repository\ProgramRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ProgramRepository;
+use Symfony\Component\HttpFoundation\File\File;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
+
 /**
  * @ORM\Entity(repositoryClass=ProgramRepository::class)
+ * @UniqueEntity("title", message="Ce programme existe dejà")
+ * @Vich\Uploadable
  */
 class Program
 {
@@ -22,16 +29,18 @@ class Program
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="ne me laisse pas tout vide")
-     * @Assert\Length(max="255", maxMessage="La catégorie saisie {{ value }} est trop longue, elle ne devrait pas dépasser {{ limit }} caractères")
+     * @Assert\NotBlank(message="Le titre doit être défini.")
+     * @Assert\Length(max="255", maxMessage="La titre doit faire maximum {{ limit }} caractères")
      */
-
     private $title;
 
     /**
      * @ORM\Column(type="text")
      * @Assert\NotBlank(message="Le synopsis ne doit pas être vide.")
-     * @Assert\Regex(pattern="/plus belle la vie/", match=false, message="On parle de vraies séries ici, en espèrant que les fans de p'ubelavi ne voient pas ce message")
+     * @Assert\Regex(
+     * pattern="/plus belle la vie/",
+     * match=false,
+     * message="On parle de vraies séries ici")
      */
     private $summary;
 
@@ -39,6 +48,12 @@ class Program
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $poster;
+
+    /**
+      * @Vich\UploadableField(mapping="poster_file", fileNameProperty="poster")
+      * @var File
+    */
+    private $posterFile;
 
     /**
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="programs")
@@ -66,7 +81,7 @@ class Program
      */
     private $actors;
 
-     /**
+    /**
      * @ORM\Column(type="string", length=255)
      */
     private $slug;
@@ -77,22 +92,16 @@ class Program
      */
     private $owner;
 
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $updatedAt;
+
     public function __construct()
     {
         $this->seasons = new ArrayCollection();
         $this->actors = new ArrayCollection();
-    }
-
-    public function getSlug(): ?string
-    {
-        return $this->slug;
-    }
-
-    public function setSlug(string $slug): self
-    {
-        $this->slug = $slug;
-
-        return $this;
+        $this->updatedAt = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -196,7 +205,7 @@ class Program
     {
         if (!$this->seasons->contains($season)) {
             $this->seasons[] = $season;
-            $season->setProgramId($this);
+            $season->setProgram($this);
         }
 
         return $this;
@@ -206,8 +215,8 @@ class Program
     {
         if ($this->seasons->removeElement($season)) {
             // set the owning side to null (unless already changed)
-            if ($season->getProgramId() === $this) {
-                $season->setProgramId(null);
+            if ($season->getProgram() === $this) {
+                $season->setProgram(null);
             }
         }
 
@@ -241,6 +250,18 @@ class Program
         return $this;
     }
 
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): self
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
     public function getOwner(): ?User
     {
         return $this->owner;
@@ -249,6 +270,45 @@ class Program
     public function setOwner(?User $owner): self
     {
         $this->owner = $owner;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of posterFile
+     *
+     * @return  File
+     */ 
+    public function getPosterFile(): ?File
+    {
+        return $this->posterFile;
+    }
+
+    /**
+     * Set the value of posterFile
+     *
+     * @param  File  $posterFile
+     *
+     * @return  self
+     */
+    public function setPosterFile(File $posterFile = null): Program
+    {
+        $this->posterFile = $posterFile;
+        if ($posterFile) {
+            $this->updatedAt = new DateTime('now');
+        }
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeInterface $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }

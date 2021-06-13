@@ -21,7 +21,7 @@ use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-
+use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 /**
  * @Route("/programs", name="program_")

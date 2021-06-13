@@ -43,7 +43,8 @@
         "symfonycasts/verify-email-bundle": "^1.5",
         "twig/extensions": "^1.5",
         "twig/extra-bundle": "^2.12|^3.0",
-        "twig/twig": "^2.12|^3.0"
+        "twig/twig": "^2.12|^3.0",
+        "vich/uploader-bundle": "^1.18"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.4",
@@ -95,7 +96,7 @@
     },
     "extra": {
         "symfony": {
-            "allow-contrib": false,
+            "allow-contrib": true,
             "require": "5.2.*"
         }
     }

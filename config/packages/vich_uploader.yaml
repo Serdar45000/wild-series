@@ -1,0 +1,11 @@
+vich_uploader:
+    db_driver: orm
+
+    mappings:
+        poster_file:
+            uri_prefix: /uploads
+            upload_destination: '%upload_directory%'
+            namer: Vich\UploaderBundle\Naming\UniqidNamer
+            delete_on_remove: true
+            delete_on_update: true
+            inject_on_load: false
