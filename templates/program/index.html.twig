@@ -9,12 +9,16 @@
 		</h1>
 		<div class="row justify-content-center">
 			<div class="col-5">
-				{{ form_start(form) }}
-				{{ form_widget(form) }}
-				<button class="btn btn-success float-end mt-2">Chercher</button>
-				{{ form_end(form) }}
+				<form id="searchForm" action="{{ path('program_search') }}" method="get">
+					<div id="searchBox">
+						<input type="text" name="q" id="searchField" autocomplete="off">
+						<ul id="autocomplete"></ul>
+					</div>
+					<button>Chercher</button>
+				</form>
 			</div>
 		</div>
+
 
 		{% for program in programs %}
 			<div class="row justify-content-center">

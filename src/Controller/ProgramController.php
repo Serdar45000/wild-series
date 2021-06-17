@@ -75,6 +75,37 @@ class ProgramController extends AbstractController
         }
         return $this->render('program/new.html.twig', ["form" => $form->createView()]);
     }
+    /**
+     * @Route("/search", name="search", methods={"GET"})
+     * @return Response
+     */
+    public function search(Request $request, ProgramRepository $programRepository): Response
+    {
+        $query = $request->query->get('q');
+        if (null !== $query) {
+            $programs = $programRepository->findByQuery($query);
+        }
+        return $this->render('program/index.html.twig', [
+            'programs' => $programs ?? [],
+        ]);
+    }
+    /**
+     * @Route("/autocomplete", name="autocomplete", methods={"GET"})
+     * @return Response
+     */
+    public function autocomplete(Request $request, ProgramRepository $programRepository): Response
+    {
+        // get value of "q" in the query string
+        $query = $request->query->get('q');
+
+        // if $query is not null, fetch every program with the value of $query inside its title
+        if (null !== $query) {
+            $programs = $programRepository->findByQuery($query);
+        }
+
+        // return all programs data that have been fetched in json format
+        return $this->json($programs, 200);
+    }
 
     /**
      * @Route("/{slug}", name="show")
@@ -101,8 +132,7 @@ class ProgramController extends AbstractController
             'seasons' => $seasons,
         ]);
     }
-
-
+  
     /**
      * @Route("/{slug}/seasons/{seasonId}", name="season_show")
      * @ParamConverter("program", class="App\Entity\Program", options={"mapping": {"slug": "slug"}})
@@ -238,4 +268,7 @@ class ProgramController extends AbstractController
             'episodeSlug' => $episode->getSlug(),
         ]);
     }
+
+
+ 
 }
