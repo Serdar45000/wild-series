@@ -83,7 +83,7 @@ class EpisodeController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
-
+            $this->addFlash('success', 'Épisode mise à jour');
             return $this->redirectToRoute('episode_index');
         }
         $slug = $slugify->generate($episode->getTitle());
@@ -103,6 +103,7 @@ class EpisodeController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($episode);
             $entityManager->flush();
+            $this->addFlash('warning', 'Épisode supprimé');
         }
         $slug = $slugify->generate($episode->getTitle());
         $episode->setSlug($slug);

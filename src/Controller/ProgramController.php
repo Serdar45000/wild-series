@@ -22,6 +22,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * @Route("/programs", name="program_")
@@ -203,6 +204,7 @@ class ProgramController extends AbstractController
                 $comment->setAuthor($this->getUser());
                 $entityManager->persist($comment);
                 $entityManager->flush();
+                $this->addFlash('success', 'Commentaire envoyé');
                 return $this->redirect($request->getUri());
             } else {
                 throw new AccessDeniedException('Seul les membres peuvent enregsitrer un nouveau programme');
@@ -227,7 +229,7 @@ class ProgramController extends AbstractController
     {
         if (!($this->getUser() == $program->getOwner()) && !in_array('ROLE_ADMIN', $this->getUser()->getRoles())) {
             // If not the owner, throws a 403 Access Denied exception
-            throw new AccessDeniedException('Only the owner can edit the program!');
+            throw new AccessDeniedException('Vous n\'êtes pas autorisé !');
         }
 
         $form = $this->createForm(ProgramType::class, $program);
@@ -235,6 +237,7 @@ class ProgramController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
+            $this->addFlash('success', 'Programme modifié');
             return $this->redirectToRoute('program_index');
         }
 
@@ -260,6 +263,7 @@ class ProgramController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($comment);
             $entityManager->flush();
+            $this->addFlash('warning', 'Commentaire supprimé');
         }
 
         return $this->redirectToRoute('program_episode_show', [
