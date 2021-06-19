@@ -125,7 +125,7 @@ class ProgramController extends AbstractController
 
         if (!$program) {
             throw $this->createNotFoundException(
-                'Programme avec id ' . $programId . ' inexistant dans la base de données.'
+                'Programme avec id ' . $program . ' inexistant dans la base de données.'
             );
         }
         return $this->render('program/show.html.twig', [
@@ -278,15 +278,17 @@ class ProgramController extends AbstractController
      */
     public function addToWatchList(Program $program, EntityManagerInterface $em): Response
     {
-        if ($this->getUser()->isInWatchList($program)){
-            $this->getUser()->removeFromWatchlist($program);
-        } else {
-            $this->getUser()->addToWatchList($program);
+        if ($this->getUser()) {
+            if ($this->getUser()->isInWatchList($program)) {
+                $this->getUser()->removeFromWatchlist($program);
+            } else {
+                $this->getUser()->addToWatchList($program);
+            }            
+        $em->flush();
         }
 
-        $em->flush();
-        return $this->redirectToRoute('program_show', [
-            'slug' => $program->getSlug(),
+        return $this->json([
+            'isInWatchlist' => $this->getUser()->isInWatchlist($program)
         ]);
-    } 
+    }
 }
