@@ -106,6 +106,7 @@ class Program
     {
         $this->seasons = new ArrayCollection();
         $this->actors = new ArrayCollection();
+        $this->updatedAt = new ArrayCollection();
         $this->viewers = new ArrayCollection();
     }
 

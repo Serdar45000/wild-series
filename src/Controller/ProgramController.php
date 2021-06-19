@@ -30,10 +30,10 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 class ProgramController extends AbstractController
 {
     /**
-    * Show all rows from Program’s entity
-    * @Route("/", name="index")
-    * @return Response A response instance
-    */
+     * Show all rows from Program’s entity
+     * @Route("/", name="index")
+     * @return Response A response instance
+     */
     public function index(Request $request, ProgramRepository $programRepository): Response
     {
         $programs = $this->getDoctrine()
@@ -56,10 +56,10 @@ class ProgramController extends AbstractController
             ]);
     }
 
-    /**
-    * @Route("/new", name="new")
-    * @return Response
-    */
+     /**
+     * @Route("/new", name="new")
+     * @return Response
+     */
     public function new(Request $request, Slugify $slugify) : Response
     {
         $program = new Program();
@@ -72,17 +72,46 @@ class ProgramController extends AbstractController
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($program);
         $entityManager->flush();
-
         return $this->redirectToRoute('program_index');
         }
-        
         return $this->render('program/new.html.twig', ["form" => $form->createView()]);
+    }
+    /**
+     * @Route("/search", name="search", methods={"GET"})
+     * @return Response
+     */
+    public function search(Request $request, ProgramRepository $programRepository): Response
+    {
+        $query = $request->query->get('q');
+        if (null !== $query) {
+            $programs = $programRepository->findByQuery($query);
+        }
+        return $this->render('program/index.html.twig', [
+            'programs' => $programs ?? [],
+        ]);
+    }
+    /**
+     * @Route("/autocomplete", name="autocomplete", methods={"GET"})
+     * @return Response
+     */
+    public function autocomplete(Request $request, ProgramRepository $programRepository): Response
+    {
+        // get value of "q" in the query string
+        $query = $request->query->get('q');
+
+        // if $query is not null, fetch every program with the value of $query inside its title
+        if (null !== $query) {
+            $programs = $programRepository->findByQuery($query);
+        }
+
+        // return all programs data that have been fetched in json format
+        return $this->json($programs, 200);
     }
 
     /**
-    * @Route("/{slug}", name="show")
-    * @return Response
-    */
+     * @Route("/{slug}", name="show")
+     * @return Response
+     */
     public function show(Program $program, Slugify $slugify): Response
     {
         $seasons = $this->getDoctrine()
@@ -106,11 +135,11 @@ class ProgramController extends AbstractController
     }
   
     /**
-    * @Route("/{slug}/seasons/{seasonId}", name="season_show")
-    * @ParamConverter("program", class="App\Entity\Program", options={"mapping": {"slug": "slug"}})
-    * @ParamConverter("season", class="App\Entity\Season", options={"mapping": {"seasonId": "id"}})
-    * @return Response
-    */
+     * @Route("/{slug}/seasons/{seasonId}", name="season_show")
+     * @ParamConverter("program", class="App\Entity\Program", options={"mapping": {"slug": "slug"}})
+     * @ParamConverter("season", class="App\Entity\Season", options={"mapping": {"seasonId": "id"}})
+     * @return Response
+     */
     public function showSeason(Program $program, Season $season): Response
     {
 
@@ -140,12 +169,12 @@ class ProgramController extends AbstractController
     }
 
     /**
-    * @Route("/{programSlug}/seasons/{seasonId}/episodes/{episodeSlug}", name="episode_show")
-    * @ParamConverter("program", class="App\Entity\Program", options={"mapping": {"programSlug": "slug"}})
-    * @ParamConverter("season", class="App\Entity\Season", options={"mapping": {"seasonId": "id"}})
-    * @ParamConverter("episode", class="App\Entity\Episode", options={"mapping": {"episodeSlug": "slug"}})
-    * @return Response
-    */
+     * @Route("/{programSlug}/seasons/{seasonId}/episodes/{episodeSlug}", name="episode_show")
+     * @ParamConverter("program", class="App\Entity\Program", options={"mapping": {"programSlug": "slug"}})
+     * @ParamConverter("season", class="App\Entity\Season", options={"mapping": {"seasonId": "id"}})
+     * @ParamConverter("episode", class="App\Entity\Episode", options={"mapping": {"episodeSlug": "slug"}})
+     * @return Response
+     */
     
     public function showEpisode(Request $request, Program $program, Season $season, Episode $episode, EntityManagerInterface $entityManager, Slugify $slugify): Response
     {
@@ -192,10 +221,10 @@ class ProgramController extends AbstractController
         ]);
     }
 
-    /**
-    * @Route("/{slug}/edit", name="edit", methods={"GET","POST"})
-    * @ParamConverter("program", class="App\Entity\Program", options={"mapping": {"slug": "slug"}})
-    */
+        /**
+     * @Route("/{slug}/edit", name="edit", methods={"GET","POST"})
+     * @ParamConverter("program", class="App\Entity\Program", options={"mapping": {"slug": "slug"}})
+     */
     public function edit(Request $request, Program $program): Response
     {
         if (!($this->getUser() == $program->getOwner()) && !in_array('ROLE_ADMIN', $this->getUser()->getRoles())) {
@@ -219,8 +248,8 @@ class ProgramController extends AbstractController
     }
 
     /**
-    * @Route("/comment/{id}", name="delete_comment", methods={"POST"})
-    */
+     * @Route("/comment/{id}", name="delete_comment", methods={"POST"})
+     */
     public function deleteComment(Request $request, Comment $comment): Response
     {
         /** @var Episode */
@@ -245,53 +274,19 @@ class ProgramController extends AbstractController
     }
 
     /**
-    * @Route("/search", name="search", methods={"GET"})
-    * @return Response
-    */
-    public function search(Request $request, ProgramRepository $programRepository): Response
+     * @Route("/{id}/watchlist", name="watchlist", methods={"GET","POST"})
+     */
+    public function addToWatchList(Program $program, EntityManagerInterface $em): Response
     {
-        $query = $request->query->get('q');
-        if (null !== $query) {
-            $programs = $programRepository->findByQuery($query);
+        if ($this->getUser()->isInWatchList($program)){
+            $this->getUser()->removeFromWatchlist($program);
+        } else {
+            $this->getUser()->addToWatchList($program);
         }
-        return $this->render('program/index.html.twig', [
-            'programs' => $programs ?? [],
-        ]);
-    }
 
-    /**
-    * @Route("/autocomplete", name="autocomplete", methods={"GET"})
-    * @return Response
-    */
-    public function autocomplete(Request $request, ProgramRepository $programRepository): Response
-    {
-        // get value of "q" in the query string
-        $query = $request->query->get('q');
-
-        // if $query is not null, fetch every program with the value of $query inside its title
-        if (null !== $query) {
-            $programs = $programRepository->findByQuery($query);
-        }
-        // return all programs data that have been fetched in json format
-        return $this->json($programs, 200);
-    }
-
-    /**
-    * @Route("/{id}/watchlist", name="watchlist", methods={"GET","POST"})
-    */
-    public function addToWatchList(Program $program, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->getUser()) {
-            if ($this->getUser()->isInWatchList($program)) {
-                $this->getUser()->removeFromWatchlist($program);
-            } else {
-                $this->getUser()->addToWatchList($program);
-            }
-
-            $entityManager->flush();
-        }
-        return $this->json([
-            'isInWatchlist' => $this->getUser()->isInWatchlist($program)        
+        $em->flush();
+        return $this->redirectToRoute('program_show', [
+            'slug' => $program->getSlug(),
         ]);
     } 
 }
