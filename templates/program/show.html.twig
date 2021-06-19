@@ -26,19 +26,11 @@
 						<div class="col-8">
 							<h1 class="mt-0">{{ program.title }}</h1>
 							<p>
-<<<<<<< HEAD
-							{% if app.user %}
-								<a id="watchlist" href="{{ path('program_watchlist', {id: program.id})}}">
-									<i class="bi {{ app.user.isInWatchlist(program) ? 'bi-heart-fill' : 'bi-heart' }}"></i>
-								</a>
-							{% endif %}
-=======
 								{% if app.user %}
 									<a id="watchlist" href="{{ path('program_watchlist', {id: program.id})}}">
 										<i class="bi {{ app.user.isInWatchlist(program) ? 'bi-heart-fill' : 'bi-heart' }}"></i>
 									</a>
 								{% endif %}
->>>>>>> 30ee78a3e393adbb35e9aa62d72b547df2761256
 							</p>
 							<p>{{ program.summary }}</p>
 							<p>Catégorie :
