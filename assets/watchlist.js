@@ -1,4 +1,3 @@
-///test
 const watchlist = document.querySelector('#watchlist');
 watchlist.addEventListener('click', addToWatchlist);
 
